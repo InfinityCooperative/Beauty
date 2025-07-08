@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Consultas e Cupons Beauty</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Container da página inteira */
+    #appContainer {
+      display: none;
+      max-width: 800px;
+      width: 100%;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #ccc;
+      padding: 20px;
+    }
+
+    /* Tela de login */
+    #loginContainer {
+      background: #fff;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 0 15px #aaa;
+      width: 320px;
+      text-align: center;
+    }
+
+    h1, h2 {
+      color: #8a2be2;
+      margin-bottom: 20px;
+    }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 18px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px;
+      width: 100%;
+      font-size: 18px;
+      background: #8a2be2;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #6b1fc2;
+    }
+
+    /* Seu sistema principal dentro do container */
+    label, select, input {
+      display: block;
+      margin: 10px 0;
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    .cupom, .historico {
+      margin: 5px 0;
+      padding: 8px;
+      background: #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cupom button {
+      background: red;
+      font-size: 12px;
+      width: auto;
+      padding: 4px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      border: none;
+      color: white;
+    }
+    @media (max-width: 600px) {
+      #appContainer {
+        padding: 10px;
+      }
+      input, select, button {
+        font-size: 18px;
+      }
+      #loginContainer {
+        width: 90%;
+        padding: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="loginContainer">
+    <h1>Login</h1>
+    <input id="senhaInput" type="password" placeholder="Digite a senha" autofocus />
+    <button onclick="verificarSenha()">Entrar</button>
+  </div>
+
+  <div id="appContainer">
+    <h1>Sistema de Consultas e Cupons</h1>
+    <div class="container">
+      <h2>Cadastro de Cliente</h2>
+      <input id="nomeCliente" placeholder="Nome do cliente" />
+      <input id="telefoneCliente" placeholder="Telefone com DDD (ex: 11988887777)" />
+      <button onclick="adicionarCliente()">Adicionar Cliente</button>
+
+      <h2>Clientes</h2>
+      <select id="selectCliente"></select>
+      <button onclick="removerCliente()">Remover Cliente</button>
+
+      <h2>Informações do Cliente Selecionado</h2>
+      <h3 id="nomeSelecionado">Nenhum cliente selecionado</h3>
+      <div id="infoConsultas"></div>
+
+      <h2>Consultas</h2>
+      <button onclick="registrarConsulta()">Registrar Consulta</button>
+
+      <h2>Cupons do Cliente</h2>
+      <ul id="listaCupons"></ul>
+      <button onclick="exportarPDF()">📄 Exportar Cupons em PDF</button>
+
+      <h2>Histórico de Cupons Usados</h2>
+      <ul id="historicoCupons"></ul>
+    </div>
+  </div>
+
+  <script>
+    // --- Login ---
+    const senhaCorreta = "3003";
+
+    function verificarSenha() {
+      const senha = document.getElementById("senhaInput").value;
+      if (senha === senhaCorreta) {
+        document.getElementById("loginContainer").style.display = "none";
+        document.getElementById("appContainer").style.display = "block";
+        carregarClientes();
+      } else {
+        alert("Senha incorreta!");
+        document.getElementById("senhaInput").value = "";
+        document.getElementById("senhaInput").focus();
+      }
+    }
+
+    // Permitir pressionar Enter para entrar no login
+    document.getElementById("senhaInput").addEventListener("keyup", e => {
+      if (e.key === "Enter") verificarSenha();
+    });
+
+    // --- Sistema de Consultas e Cupons (mesmo código que você já tinha) ---
+
+    let db;
+    let clientes = [];
+
+    const request = indexedDB.open("BeautyDB", 1);
+
+    request.onupgradeneeded = function (event) {
+      db = event.target.result;
+      db.createObjectStore("clientes", { keyPath: "id", autoIncrement: true });
+    };
+
+    request.onsuccess = function (event) {
+      db = event.target.result;
+      // Não carregar clientes aqui, só depois do login
+    };
+
+    function carregarClientes() {
+      const tx = db.transaction("clientes", "readonly");
+      const store = tx.objectStore("clientes");
+      const req = store.getAll();
+      req.onsuccess = () => {
+        clientes = req.result;
+        atualizarSelect();
+
+        // Restaurar último cliente selecionado
+        const ultimoId = localStorage.getItem("clienteSelecionado");
+        if (ultimoId && clientes.some(c => c.id == ultimoId)) {
+          document.getElementById("selectCliente").value = ultimoId;
+        }
+        atualizarInfo();
+      };
+    }
+
+    function atualizarSelect() {
+      const select = document.getElementById("selectCliente");
+      select.innerHTML = "";
+      clientes.forEach(c => {
+        const option = document.createElement("option");
+        option.value = c.id;
+        option.textContent = `${c.nome} (${c.telefone})`;
+        select.appendChild(option);
+      });
+    }
+
+    function adicionarCliente() {
+      const nome = document.getElementById("nomeCliente").value.trim();
+      const tel = document.getElementById("telefoneCliente").value.trim();
+
+      if (!nome || !tel) return alert("Preencha nome e telefone");
+      if (!/^\d{10,11}$/.test(tel)) return alert("Informe um telefone válido com DDD, ex: 11988887777");
+
+      const novo = { nome, telefone: tel, consultas: 0, cupons: [], usados: [] };
+      const tx = db.transaction("clientes", "readwrite");
+      const store = tx.objectStore("clientes");
+      const req = store.add(novo);
+
+      req.onsuccess = () => {
+        carregarClientes();
+        document.getElementById("nomeCliente").value = "";
+        document.getElementById("telefoneCliente").value = "";
+      };
+    }
+
+    function removerCliente() {
+      const id = parseInt(document.getElementById("selectCliente").value);
+      if (!id) return alert("Selecione um cliente para remover");
+      if (!confirm("Deseja realmente remover este cliente?")) return;
+      const tx = db.transaction("clientes", "readwrite");
+      const store = tx.objectStore("clientes");
+      store.delete(id).onsuccess = () => {
+        localStorage.removeItem("clienteSelecionado");
+        carregarClientes();
+      };
+    }
+
+    function registrarConsulta() {
+      const id = parseInt(document.getElementById("selectCliente").value);
+      if (!id) return alert("Selecione um cliente para registrar consulta");
+      const tx = db.transaction("clientes", "readwrite");
+      const store = tx.objectStore("clientes");
+      const req = store.get(id);
+      req.onsuccess = () => {
+        const cliente = req.result;
+        cliente.consultas += 1;
+
+        if (cliente.consultas >= 10) {
+          const cupom = gerarCupomUnico(cliente);
+          cliente.cupons.push(cupom);
+          cliente.consultas = 0; // Zera as consultas
+
+          store.put(cliente).onsuccess = () => {
+            alert(`🎉 ${cliente.nome} ganhou o cupom: ${cupom}`);
+            enviarPorWhatsApp(cliente.telefone, cupom);
+            carregarClientes();
+          };
+        } else {
+          store.put(cliente).onsuccess = carregarClientes;
+        }
+      };
+    }
+
+    function gerarCupomUnico(cliente) {
+      let cupom;
+      do {
+        cupom = `beauty${Math.floor(Math.random() * 90 + 10)}`;
+      } while (cliente.cupons.includes(cupom) || cliente.usados.includes(cupom));
+      return cupom;
+    }
+
+    function atualizarInfo() {
+      const id = parseInt(document.getElementById("selectCliente").value);
+      const cliente = clientes.find(c => c.id === id);
+      if (!cliente) {
+        document.getElementById("nomeSelecionado").textContent = "Nenhum cliente selecionado";
+        document.getElementById("infoConsultas").textContent = "";
+        document.getElementById("listaCupons").innerHTML = "";
+        document.getElementById("historicoCupons").innerHTML = "";
+        return;
+      }
+
+      localStorage.setItem("clienteSelecionado", id);
+
+      document.getElementById("nomeSelecionado").textContent = `Cliente: ${cliente.nome}`;
+
+      const faltam = 10 - cliente.consultas;
+      document.getElementById("infoConsultas").textContent = 
+        `Consultas: ${cliente.consultas} | Faltam ${faltam} para próximo cupom | Cupons disponíveis: ${cliente.cupons.length}`;
+
+      const ul = document.getElementById("listaCupons");
+      ul.innerHTML = "";
+      cliente.cupons.forEach((cupom, index) => {
+        const li = document.createElement("li");
+        li.className = "cupom";
+        li.innerHTML = `${cupom} 
+          <button onclick="usarCupom(${cliente.id}, ${index})">Usar</button>`;
+        ul.appendChild(li);
+      });
+
+      const hist = document.getElementById("historicoCupons");
+      hist.innerHTML = "";
+      cliente.usados.forEach(cupom => {
+        const li = document.createElement("li");
+        li.className = "historico";
+        li.textContent = `Usado: ${cupom}`;
+        hist.appendChild(li);
+      });
+    }
+
+    function usarCupom(clienteId, cupomIndex) {
+      const tx = db.transaction("clientes", "readwrite");
+      const store = tx.objectStore("clientes");
+      const req = store.get(clienteId);
+      req.onsuccess = () => {
+        const cliente = req.result;
+        const usado = cliente.cupons.splice(cupomIndex, 1)[0];
+        cliente.usados.push(usado);
+        store.put(cliente).onsuccess = carregarClientes;
+      };
+    }
+
+    function exportarPDF() {
+      const id = parseInt(document.getElementById("selectCliente").value);
+      const cliente = clientes.find(c => c.id === id);
+      if (!cliente) return alert("Selecione um cliente para exportar");
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFontSize(16);
+      doc.text(`Cupons de Desconto - ${cliente.nome}`, 10, 20);
+
+      if (cliente.cupons.length === 0) {
+        doc.text("Nenhum cupom disponível", 10, 30);
+      } else {
+        cliente.cupons.forEach((cupom, i) => {
+          doc.text(`${i + 1}. ${cupom}`, 10, 30 + i * 10);
+        });
+      }
+
+      doc.save(`Cupons_${cliente.nome}.pdf`);
+    }
+
+    function enviarPorWhatsApp(telefone, cupom) {
+      const numero = telefone.replace(/\D/g, "");
+      const mensagem = encodeURIComponent(`Olá! Você ganhou um cupom de desconto: ${cupom} 🎁`);
+      const link = `https://wa.me/55${numero}?text=${mensagem}`;
+      window.open(link, "_blank");
+    }
+
+    document.getElementById("selectCliente").addEventListener("change", atualizarInfo);
+  </script>
+
+</body>
+</html>
