@@ -3,1103 +3,924 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sistema Beauty</title>
+<title>Sistema de Agendamento Beauty</title>
 <style>
-  /* Reset e estilo geral */
-  * {
-    box-sizing: border-box;
-  }
   body {
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: Arial, sans-serif;
+    background: #f0f2f5;
     margin: 0; padding: 0;
-    background: #f9faff;
-    color: #333;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
   }
-  header {
-    background: #00b6ff;
-    color: #fff;
-    padding: 1rem 2rem;
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: 700;
-    box-shadow: 0 3px 6px rgb(0 0 0 / 0.2);
-  }
-  main {
-    flex: 1;
+  #login-container, #app-container {
+    display: grid;
+    justify-items: center;
+    justify-content: center;
     max-width: 900px;
-    margin: 1rem auto 3rem;
+    margin: 30px auto;
     background: white;
     border-radius: 8px;
-    padding: 1rem 2rem 2rem;
-    box-shadow: 0 0 10px rgb(0 0 0 / 0.1);
+    box-shadow: 0 3px 12px rgb(0 0 0 / 0.1);
+    padding: 20px;
   }
-  /* Login */
-  #login-container {
-    max-width: 320px;
-    margin: 5rem auto;
-    background: white;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 0 12px rgba(0,0,0,0.15);
-    text-align: center;
+  #app-container {
+    display: none;
   }
-  #login-container h2 {
-    margin-bottom: 1rem;
-    color: #00b6ff;
+  nav {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
   }
-  #login-container input[type="password"] {
-    width: 100%;
-    padding: 0.75rem;
-    font-size: 1rem;
-    border: 2px solid #00b6ff;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    transition: border-color 0.3s ease;
-  }
-  #login-container input[type="password"]:focus {
-    outline: none;
-    border-color: #00b6ff;
-  }
-  #login-container button {
-    background: #00b6ff;
-    color: white;
+  nav button {
+    padding: 10px 15px;
+    background-color: #0029ff;
     border: none;
-    padding: 0.75rem 1.5rem;
-    font-size: 1.1rem;
+    color: white;
+    font-weight: 600;
     border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
-  #login-container button:hover {
-    background: #3b5a7d;
+  nav button.active, nav button:hover {
+    background-color: #4ac6ff;
   }
-  #login-error {
-    color: #e63946;
-    margin-top: 0.5rem;
-    font-weight: 600;
-  }
-
-  /* App e abas */
-  #app-container {
-    display: none;
-    flex-direction: column;
-    height: 100%;
-  }
-  nav.tabs {
-    display: flex;
-    border-bottom: 2px solid #00b6ff;
-    margin-bottom: 1rem;
-  }
-  nav.tabs button {
-    background: transparent;
-    border: none;
-    padding: 1rem 1.5rem;
-    font-weight: 600;
-    cursor: pointer;
-    color: #00b6ff;
-    border-bottom: 3px solid transparent;
-    transition: all 0.3s ease;
-    flex: 1;
-    text-align: center;
-  }
-  nav.tabs button.active {
-    border-bottom-color: #00b6ff;
-    color: #00b6ff;
-  }
-  section.tab-content {
+  .tab-content {
     display: none;
   }
-  section.tab-content.active {
+  .tab-content.active {
     display: block;
-  }
-
-  /* Formulários e tabelas */
-  form {
-    max-width: 100%;
   }
   label {
-    display: block;
-    margin-top: 1rem;
+    color: #0029ff;
+    display: grid;
+    justify-items: center;
+    margin-top: 12px;
     font-weight: 600;
   }
   input, select, textarea {
     width: 100%;
-    padding: 0.5rem;
-    font-size: 1rem;
-    border: 1.8px solid #bbb;
+    padding: 7px 10px;
+    margin: 20px;
+    border: 1px solid #0029ff;
     border-radius: 6px;
-    margin-top: 0.25rem;
-    transition: border-color 0.3s ease;
-  }
-  input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: #00b6ff;
+    font-size: 14px;
   }
   textarea {
     resize: vertical;
-    min-height: 80px;
   }
-  button {
-    margin-top: 1.5rem;
-    background: #00b6ff;
-    color: white;
+  button.btn-small {
+    padding: 5px 10px;
+    margin: 0 3px;
+    border-radius: 6px;
     border: none;
-    padding: 0.7rem 1.4rem;
-    font-weight: 700;
-    font-size: 1rem;
-    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
   }
-  button:hover {
-    background: #00b6ff;
+  button.btn-edit {
+    background-color: #2979ff;
+    color: white;
   }
-
-  /* Tabelas e listas */
+  button.btn-delete {
+    background-color: #d32f2f;
+    color: white;
+  }
+  button.btn-link {
+    background: none;
+    color: #0029ff;
+    text-decoration: underline;
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    padding: 0;
+  }
   table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 1rem;
-    font-size: 0.95rem;
+    margin-top: 12px;
   }
   th, td {
-    padding: 0.5rem 0.7rem;
-    border-bottom: 1px solid #ddd;
+    border: 1px solid #ddd;
+    padding: 10px;
     text-align: left;
   }
   th {
-    background: #e2eafc;
-    font-weight: 700;
-    color: #00b6ff;
+    background-color: #0029ff;
+    color: white;
   }
-  tr:hover {
-    background: #f3f7ff;
-  }
-  a.link-button {
-    color: #00b6ff;
-    text-decoration: underline;
-    cursor: pointer;
-  }
-  .btn-danger {
-    background: #e63946;
-  }
-  .btn-danger:hover {
-    background: #b82a36;
-  }
-  .btn-small {
-    font-size: 0.85rem;
-    padding: 0.3rem 0.6rem;
-    border-radius: 5px;
-    margin-left: 0.3rem;
-  }
-
-  /* Modal */
-  .modal-bg {
-    position: fixed;
-    top:0; left:0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-  }
-  .modal-bg.active {
-    display: flex;
-  }
-  .modal {
-    background: white;
-    padding: 1.5rem 2rem;
-    border-radius: 10px;
-    max-width: 500px;
-    width: 90%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 0 20px rgba(0,0,0,0.25);
-  }
-  .modal h3 {
-    margin-top: 0;
-    color: #00b6ff;
-  }
-  .modal .modal-close {
-    float: right;
-    font-size: 1.2rem;
-    font-weight: 700;
-    cursor: pointer;
-    color: #888;
-  }
-  .modal .modal-close:hover {
-    color: #333;
-  }
-
-  /* Promoção */
-  #promocao-list a {
-    display: block;
-    margin: 0.3rem 0;
-    color: #2a7a2a;
+  #msg-agenda {
+    margin-top: 10px;
     font-weight: 600;
+  }
+  /* Modal */
+  #modal-anamnese {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgb(0 0 0 / 0.5);
+  }
+  #modal-anamnese-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+  }
+  #close-modal {
+    float: right;
     cursor: pointer;
-    text-decoration: underline;
+    font-weight: bold;
+    font-size: 22px;
   }
-  #promocao-list a:hover {
-    color: #145214;
+  h2{
+    color: #0029ff;
   }
-
-  /* Responsivo simples */
-  @media(max-width:600px) {
-    main {
-      margin: 1rem;
-      padding: 1rem;
-    }
-    nav.tabs button {
-      font-size: 0.9rem;
-      padding: 0.8rem;
-    }
+  h3{
+    color: #0029ff;
   }
 </style>
 </head>
 <body>
 
-<header>Sistema Beauty</header>
-
-<!-- Login -->
 <div id="login-container">
   <h2>Login</h2>
-  <input type="password" id="login-password" placeholder="Digite a senha" autofocus />
+  <input type="password" id="login-password" placeholder="Digite a senha" />
   <button id="btn-login">Entrar</button>
-  <div id="login-error"></div>
+  <p id="login-msg" style="color:red;"></p>
 </div>
 
-<!-- App -->
 <div id="app-container">
-  <nav class="tabs" role="tablist" aria-label="Abas do sistema">
-    <button class="tab-button active" data-tab="cadastro" role="tab" aria-selected="true" aria-controls="tab-cadastro" id="tab-btn-cadastro">Cadastro</button>
-    <button class="tab-button" data-tab="agenda" role="tab" aria-selected="false" aria-controls="tab-agenda" id="tab-btn-agenda">Agenda</button>
-    <button class="tab-button" data-tab="calendario" role="tab" aria-selected="false" aria-controls="tab-calendario" id="tab-btn-calendario">Calendário</button>
-    <button class="tab-button" data-tab="promocao" role="tab" aria-selected="false" aria-controls="tab-promocao" id="tab-btn-promocao">Promoção</button>
+  <nav>
+    <button class="active" data-tab="cadastro">Cadastro / Anamnese</button>
+    <button data-tab="agenda">Agenda</button>
+    <button data-tab="calendario">Calendário</button>
+    <button data-tab="promocao">Promoção</button>
+    <button data-tab="clientes">Clientes</button>
   </nav>
 
-  <main>
-    <!-- Cadastro -->
-    <section id="tab-cadastro" class="tab-content active" role="tabpanel" aria-labelledby="tab-btn-cadastro">
-      <h2>Cadastro de Clientes + Anamnese</h2>
-      <form id="form-cadastro">
-        <label for="nome">Nome completo *</label>
-        <input type="text" id="nome" name="nome" required autocomplete="off" />
+  <div id="cadastro" class="tab-content active">
+    <h3>Cadastro e Anamnese</h3>
+    <form id="form-cadastro">
+      <input type="hidden" id="cliente-id" />
+      <label for="nome">Nome *</label>
+      <input type="text" id="nome" required />
+      
+      <label for="whatsapp">WhatsApp (xx)xxxxxxxxx *</label>
+      <input type="text" id="whatsapp" required placeholder="(xx)xxxxxxxxx" maxlength="13" />
+      
+      <label for="sexo">Sexo *</label>
+      <select id="sexo" required>
+        <option value="" disabled selected>Selecione</option>
+        <option>Masculino</option>
+        <option>Feminino</option>
+        <option>Outro</option>
+      </select>
+      
+      <label for="nascimento">Data de Nascimento *</label>
+      <input type="date" id="nascimento" required />
+      
+      <label for="email">E-mail</label>
+      <input type="email" id="email" />
+      
+      <label for="cep">CEP *</label>
+      <input type="text" id="cep" required maxlength="8" placeholder="Somente números" />
+      
+      <label for="bairro">Bairro *</label>
+      <input type="text" id="bairro" required />
+      
+      <label for="endereco">Endereço *</label>
+      <input type="text" id="endereco" required />
+      
+      <label for="numero">Número *</label>
+      <input type="text" id="numero" required />
+      
+      <label for="complemento">Complemento</label>
+      <input type="text" id="complemento" />
+      
+      <label for="gestante">Gestante *</label>
+      <select id="gestante" required>
+        <option value="" disabled selected>Selecione</option>
+        <option>Sim</option>
+        <option>Não</option>
+      </select>
+      
+      <label for="alergias">Alergias *</label>
+      <select id="alergias" required>
+        <option value="" disabled selected>Selecione</option>
+        <option>Sim</option>
+        <option>Não</option>
+      </select>
+      
+      <label for="diabete">Diabete *</label>
+      <select id="diabete" required>
+        <option value="" disabled selected>Selecione</option>
+        <option>Sim</option>
+        <option>Não</option>
+      </select>
+      
+      <label for="ist">IST *</label>
+      <select id="ist" required>
+        <option value="" disabled selected>Selecione</option>
+        <option>Sim</option>
+        <option>Não</option>
+      </select>
+      
+      <label for="ist-quais">Se sim, quais? (opcional)</label>
+      <input type="text" id="ist-quais" />
+      
+      <label for="atividade">Faz atividade física? *</label>
+      <select id="atividade" required>
+        <option value="" disabled selected>Selecione</option>
+        <option>Sim</option>
+        <option>Não</option>
+      </select>
+      
+      <label for="medicamento">Faz uso de medicamento? *</label>
+      <select id="medicamento" required>
+        <option value="" disabled selected>Selecione</option>
+        <option>Sim</option>
+        <option>Não</option>
+      </select>
+      
+      <label for="queda-pelos">Possui queda de pelos? *</label>
+      <select id="queda-pelos" required>
+        <option value="" disabled selected>Selecione</option>
+        <option>Sim</option>
+        <option>Não</option>
+      </select>
+      
+      <label for="observacoes">Observações</label>
+      <textarea id="observacoes" rows="3"></textarea>
 
-        <label for="whatsapp">WhatsApp (ex: (xx)9xxxx-xxxx) *</label>
-        <input type="text" id="whatsapp" name="whatsapp" placeholder="(xx)9xxxx-xxxx" pattern="^\(\d{2}\)9?\d{4}-?\d{4}$" title="Digite no formato (xx)9xxxx-xxxx" required autocomplete="off" />
+      <button type="submit" style="margin-top:15px; background:#0a679d; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">Salvar</button>
+      <button type="button" id="btn-cancelar" style="margin-left:10px; background:#aaa; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">Cancelar</button>
+    </form>
+  </div>
 
-        <label for="sexo">Sexo *</label>
-        <select id="sexo" name="sexo" required>
-          <option value="">Selecione...</option>
-          <option value="Masculino">Masculino</option>
-          <option value="Feminino">Feminino</option>
-          <option value="Outro">Outro</option>
-        </select>
+  <div id="agenda" class="tab-content">
+    <h3>Agendamento</h3>
+    <form id="form-agenda">
+      <label for="agenda-cliente">Cliente *</label>
+      <select id="agenda-cliente" required>
+        <option value="" disabled selected>Selecione um cliente</option>
+      </select>
 
-        <label for="nascimento">Data de nascimento *</label>
-        <input type="date" id="nascimento" name="nascimento" required max="" />
+      <label for="agenda-data">Data *</label>
+      <input type="date" id="agenda-data" required />
 
-        <label for="observacoes">Observações</label>
-        <textarea id="observacoes" name="observacoes" placeholder="Anamnese, histórico, etc..."></textarea>
+      <label for="agenda-horario">Horário *</label>
+      <select id="agenda-horario" required>
+        <option value="" disabled selected>Selecione horário</option>
+      </select>
+      
+      <button type="submit" style="margin-top:15px; background:#0a679d; color:white; border:none; padding:10px 20px; border-radius:6px; cursor:pointer;">Agendar</button>
+      <p id="msg-agenda"></p>
+    </form>
 
-        <button type="submit">Cadastrar Cliente</button>
-      </form>
+    <table>
+      <thead>
+        <tr><th>Cliente</th><th>Data</th><th>Horário</th><th>Ações</th></tr>
+      </thead>
+      <tbody id="lista-agenda"></tbody>
+    </table>
+  </div>
 
-      <hr />
+  <div id="calendario" class="tab-content">
+    <h3>Calendário</h3>
+    <table>
+      <thead>
+        <tr><th>Data</th><th>Horário</th><th>Cliente</th><th>Concluir</th></tr>
+      </thead>
+      <tbody id="lista-calendario"></tbody>
+    </table>
+  </div>
 
-      <h3>Lista de Clientes</h3>
-      <input type="text" id="search-clientes" placeholder="Buscar por nome ou WhatsApp..." style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border-radius:6px; border: 1.5px solid #ccc; font-size: 1rem;" autocomplete="off" />
+  <div id="promocao" class="tab-content">
+    <h3>Promoção</h3>
+    <div id="promo-list"></div>
+  </div>
 
-      <table aria-label="Lista de clientes">
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>WhatsApp</th>
-            <th>Sexo</th>
-            <th>Data Nasc.</th>
-            <th>Consultas</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="clientes-lista">
-          <!-- Clientes vão aqui -->
-        </tbody>
-      </table>
-    </section>
-
-    <!-- Agenda -->
-    <section id="tab-agenda" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-agenda">
-      <h2>Agendamento</h2>
-      <form id="form-agendamento">
-        <label for="cliente-agenda">Cliente *</label>
-        <select id="cliente-agenda" name="cliente-agenda" required>
-          <option value="">Selecione um cliente...</option>
-          <!-- Clientes carregados aqui -->
-        </select>
-
-        <label for="data-agenda">Data *</label>
-        <input type="date" id="data-agenda" name="data-agenda" required min="" />
-
-        <label for="hora-agenda">Horário *</label>
-        <input type="time" id="hora-agenda" name="hora-agenda" required />
-
-        <button type="submit">Agendar</button>
-      </form>
-
-      <hr />
-      <h3>Agendamentos</h3>
-      <input type="text" id="search-agendamentos" placeholder="Buscar por nome do cliente..." style="width: 100%; padding: 0.5rem; margin-bottom: 0.5rem; border-radius:6px; border: 1.5px solid #ccc; font-size: 1rem;" autocomplete="off" />
-      <table aria-label="Lista de agendamentos">
-        <thead>
-          <tr>
-            <th>Cliente</th>
-            <th>Data</th>
-            <th>Horário</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody id="agendamentos-lista">
-          <!-- Agendamentos vão aqui -->
-        </tbody>
-      </table>
-    </section>
-
-    <!-- Calendário -->
-    <section id="tab-calendario" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-calendario">
-      <h2>Calendário de Agendamentos</h2>
-
-      <div id="calendario-container">
-        <!-- Datas e agendamentos vão aparecer aqui -->
-      </div>
-    </section>
-
-    <!-- Promoção -->
-    <section id="tab-promocao" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-promocao">
-      <h2>Promoção - Clientes com 10 Consultas</h2>
-      <div id="promocao-list">
-        <!-- Lista de clientes promocionais vai aqui -->
-      </div>
-    </section>
-  </main>
-</div>
-
-<!-- Modal para exibir anamnese e consultas -->
-<div class="modal-bg" id="modal-anamnese-bg" role="dialog" aria-modal="true" aria-labelledby="modal-anamnese-title" tabindex="-1">
-  <div class="modal" role="document">
-    <span class="modal-close" id="modal-close" title="Fechar modal" aria-label="Fechar modal">&times;</span>
-    <h3 id="modal-anamnese-title">Anamnese e Consultas</h3>
-    <div id="modal-anamnese-content"></div>
+  <div id="clientes" class="tab-content">
+    <h3>Clientes</h3>
+    <input type="text" id="search-clientes" placeholder="Pesquisar por ID ou nome" style="margin-bottom:10px; padding:7px 10px; width: 100%; border-radius: 6px; border: 1px solid #ccc;"/>
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Nome</th><th>WhatsApp</th><th>Ações</th></tr>
+      </thead>
+      <tbody id="lista-clientes"></tbody>
+    </table>
   </div>
 </div>
 
-<!-- Modal confirmação uso cupom -->
-<div class="modal-bg" id="modal-cupom-bg" role="dialog" aria-modal="true" aria-labelledby="modal-cupom-title" tabindex="-1">
-  <div class="modal" role="document">
-    <span class="modal-close" id="modal-cupom-close" title="Fechar modal" aria-label="Fechar modal">&times;</span>
-    <h3 id="modal-cupom-title">Confirmar Uso do Cupom</h3>
-    <div id="modal-cupom-content"></div>
+<!-- Modal Anamnese -->
+<div id="modal-anamnese">
+  <div id="modal-anamnese-content">
+    <span id="close-modal">&times;</span>
+    <h3>Ficha de Anamnese</h3>
+    <div id="modal-anamnese-details"></div>
   </div>
 </div>
 
 <script>
-(() => {
-  // IndexedDB Setup
-  const dbName = 'beautyDB';
-  const dbVersion = 1;
+  const senhaCorreta = '3001';
   let db;
 
-  function openDB() {
-    return new Promise((resolve, reject) => {
-      const request = indexedDB.open(dbName, dbVersion);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => {
-        db = request.result;
-        resolve(db);
-      };
-      request.onupgradeneeded = e => {
-        const db = e.target.result;
-        if (!db.objectStoreNames.contains('clientes')) {
-          const clientesOS = db.createObjectStore('clientes', { keyPath: 'id', autoIncrement: true });
-          clientesOS.createIndex('nome', 'nome', { unique: false });
-          clientesOS.createIndex('whatsapp', 'whatsapp', { unique: false });
-        }
-        if (!db.objectStoreNames.contains('agendamentos')) {
-          const agendOS = db.createObjectStore('agendamentos', { keyPath: 'id', autoIncrement: true });
-          agendOS.createIndex('clienteId', 'clienteId', { unique: false });
-          agendOS.createIndex('dataHora', 'dataHora', { unique: true }); // para evitar agendamento no mesmo horário
-        }
-        if (!db.objectStoreNames.contains('cupons')) {
-          const cuponsOS = db.createObjectStore('cupons', { keyPath: 'codigo' });
-          cuponsOS.createIndex('clienteId', 'clienteId', { unique: false });
-        }
-      };
-    });
-  }
-
-  // Helpers IndexedDB
-  function add(storeName, data) {
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(storeName, 'readwrite');
-      const store = tx.objectStore(storeName);
-      const req = store.add(data);
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  }
-  function put(storeName, data) {
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(storeName, 'readwrite');
-      const store = tx.objectStore(storeName);
-      const req = store.put(data);
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  }
-  function get(storeName, key) {
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(storeName, 'readonly');
-      const store = tx.objectStore(storeName);
-      const req = store.get(key);
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  }
-  function getAll(storeName) {
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(storeName, 'readonly');
-      const store = tx.objectStore(storeName);
-      const req = store.getAll();
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  }
-  function deleteItem(storeName, key) {
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(storeName, 'readwrite');
-      const store = tx.objectStore(storeName);
-      const req = store.delete(key);
-      req.onsuccess = () => resolve();
-      req.onerror = () => reject(req.error);
-    });
-  }
-  function getIndex(storeName, indexName, key) {
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction(storeName, 'readonly');
-      const store = tx.objectStore(storeName);
-      const index = store.index(indexName);
-      const req = index.getAll(key);
-      req.onsuccess = () => resolve(req.result);
-      req.onerror = () => reject(req.error);
-    });
-  }
-
-  // Login
-  const loginContainer = document.getElementById('login-container');
-  const appContainer = document.getElementById('app-container');
-  const loginInput = document.getElementById('login-password');
-  const loginBtn = document.getElementById('btn-login');
-  const loginError = document.getElementById('login-error');
-
-  loginBtn.onclick = () => {
-    const val = loginInput.value.trim();
-    if (val === '3003') {
-      loginContainer.style.display = 'none';
-      appContainer.style.display = 'flex';
-      loginError.textContent = '';
-      loadAllData();
-    } else {
-      loginError.textContent = 'Senha incorreta!';
-      loginInput.value = '';
-      loginInput.focus();
+  // --- IndexedDB setup ---
+  const request = indexedDB.open('AgendamentoDB', 1);
+  request.onupgradeneeded = e => {
+    db = e.target.result;
+    if (!db.objectStoreNames.contains('clientes')) {
+      const clientesStore = db.createObjectStore('clientes', { keyPath: 'id', autoIncrement: true });
+    }
+    if (!db.objectStoreNames.contains('agendamentos')) {
+      const agendaStore = db.createObjectStore('agendamentos', { keyPath: 'id', autoIncrement: true });
+      agendaStore.createIndex('data', 'data', { unique: false });
+    }
+    if (!db.objectStoreNames.contains('cupons')) {
+      db.createObjectStore('cupons', { keyPath: 'codigo' });
     }
   };
-  loginInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') loginBtn.click();
+  request.onsuccess = e => {
+    db = e.target.result;
+  };
+  request.onerror = () => alert('Erro ao abrir banco IndexedDB.');
+
+  // --- Login ---
+  const loginContainer = document.getElementById('login-container');
+  const appContainer = document.getElementById('app-container');
+  const loginMsg = document.getElementById('login-msg');
+  const btnLogin = document.getElementById('btn-login');
+  const loginPassword = document.getElementById('login-password');
+  const navButtons = document.querySelectorAll('nav button');
+  const tabs = document.querySelectorAll('.tab-content');
+
+  btnLogin.onclick = () => {
+    if (loginPassword.value === senhaCorreta) {
+      loginContainer.style.display = 'none';
+      appContainer.style.display = 'block';
+      setMinDates();
+      fillHorarioOptions();
+      loadClientesOptions();
+      loadAgendamentos();
+      loadCalendario();
+      loadClientesList();
+      loadPromo();
+    } else {
+      loginMsg.textContent = 'Senha incorreta!';
+      loginPassword.value = '';
+    }
+  };
+
+  loginPassword.addEventListener('keydown', e => {
+    if (e.key === 'Enter') btnLogin.click();
   });
 
-  // Abas controle
-  const tabButtons = document.querySelectorAll('nav.tabs button.tab-button');
-  const tabContents = document.querySelectorAll('section.tab-content');
-
-  tabButtons.forEach(btn => {
+  // Navegação abas
+  navButtons.forEach(btn => {
     btn.addEventListener('click', () => {
-      tabButtons.forEach(b => {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-      });
+      if (btn.classList.contains('active')) return;
+      navButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-
-      const tab = btn.dataset.tab;
-      tabContents.forEach(tc => {
-        if (tc.id === 'tab-' + tab) tc.classList.add('active');
-        else tc.classList.remove('active');
+      const tabName = btn.getAttribute('data-tab');
+      tabs.forEach(tab => {
+        tab.id === tabName ? tab.classList.add('active') : tab.classList.remove('active');
       });
     });
   });
 
-  // Controle de datas mínimas
+  // Datas mínimas
   function setMinDates() {
     const hoje = new Date().toISOString().split('T')[0];
-    document.getElementById('nascimento').setAttribute('max', hoje);
-    document.getElementById('data-agenda').setAttribute('min', hoje);
+    document.getElementById('nascimento').max = hoje;
+    document.getElementById('agenda-data').min = hoje;
   }
-  setMinDates();
 
   // Form Cadastro
   const formCadastro = document.getElementById('form-cadastro');
-  const clientesListaTbody = document.getElementById('clientes-lista');
-  const searchClientesInput = document.getElementById('search-clientes');
+  const btnCancelar = document.getElementById('btn-cancelar');
 
-  // Form Agenda
-  const formAgenda = document.getElementById('form-agendamento');
-  const clienteAgendaSelect = document.getElementById('cliente-agenda');
-  const agendamentosListaTbody = document.getElementById('agendamentos-lista');
-  const searchAgendamentosInput = document.getElementById('search-agendamentos');
+  btnCancelar.onclick = () => {
+    formCadastro.reset();
+    document.getElementById('cliente-id').value = '';
+  };
 
-  // Calendário container
-  const calendarioContainer = document.getElementById('calendario-container');
+  formCadastro.addEventListener('submit', e => {
+    e.preventDefault();
+    salvarCliente();
+  });
 
-  // Promoção
-  const promocaoList = document.getElementById('promocao-list');
+  function salvarCliente() {
+    const clienteId = document.getElementById('cliente-id').value;
+    const cliente = {
+      nome: document.getElementById('nome').value.trim(),
+      whatsapp: document.getElementById('whatsapp').value.trim(),
+      sexo: document.getElementById('sexo').value,
+      nascimento: document.getElementById('nascimento').value,
+      email: document.getElementById('email').value.trim(),
+      cep: document.getElementById('cep').value.trim(),
+      bairro: document.getElementById('bairro').value.trim(),
+      endereco: document.getElementById('endereco').value.trim(),
+      numero: document.getElementById('numero').value.trim(),
+      complemento: document.getElementById('complemento').value.trim(),
+      gestante: document.getElementById('gestante').value,
+      alergias: document.getElementById('alergias').value,
+      diabete: document.getElementById('diabete').value,
+      ist: document.getElementById('ist').value,
+      istQuais: document.getElementById('ist-quais').value.trim(),
+      atividade: document.getElementById('atividade').value,
+      medicamento: document.getElementById('medicamento').value,
+      quedaPelos: document.getElementById('queda-pelos').value,
+      observacoes: document.getElementById('observacoes').value.trim(),
+      consultas: 0
+    };
 
-  // Modal anamnese
-  const modalAnamneseBg = document.getElementById('modal-anamnese-bg');
-  const modalAnamneseContent = document.getElementById('modal-anamnese-content');
-  const modalCloseBtn = document.getElementById('modal-close');
-
-  // Modal cupom
-  const modalCupomBg = document.getElementById('modal-cupom-bg');
-  const modalCupomContent = document.getElementById('modal-cupom-content');
-  const modalCupomClose = document.getElementById('modal-cupom-close');
-
-  modalCloseBtn.onclick = () => modalAnamneseBg.classList.remove('active');
-  modalCupomClose.onclick = () => modalCupomBg.classList.remove('active');
-
-  // Fecha modal clicando fora
-  modalAnamneseBg.onclick = e => { if (e.target === modalAnamneseBg) modalAnamneseBg.classList.remove('active'); };
-  modalCupomBg.onclick = e => { if (e.target === modalCupomBg) modalCupomBg.classList.remove('active'); };
-
-  // Variáveis de estado local para melhorar performance
-  let clientes = [];
-  let agendamentos = [];
-  let cupons = [];
-
-  // Carrega tudo do DB e atualiza UI
-  async function loadAllData() {
-    clientes = await getAll('clientes');
-    agendamentos = await getAll('agendamentos');
-    cupons = await getAll('cupons');
-    renderClientes();
-    renderClientesOptions();
-    renderAgendamentos();
-    renderCalendario();
-    renderPromocao();
-  }
-
-  // Renderiza lista clientes tabela
-  function renderClientes(filter = '') {
-    let f = filter.toLowerCase();
-    clientesListaTbody.innerHTML = '';
-    const filtered = clientes.filter(c => c.nome.toLowerCase().includes(f) || c.whatsapp.includes(f));
-    if (filtered.length === 0) {
-      clientesListaTbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#999;">Nenhum cliente encontrado.</td></tr>`;
-      return;
-    }
-    for (const c of filtered) {
-      const tr = document.createElement('tr');
-
-      // Nome com link para ver anamnese e consultas
-      const nomeTd = document.createElement('td');
-      const linkNome = document.createElement('a');
-      linkNome.href = "#";
-      linkNome.textContent = c.nome;
-      linkNome.classList.add('link-button');
-      linkNome.onclick = e => {
-        e.preventDefault();
-        showAnamneseModal(c);
+    if (clienteId) {
+      cliente.id = Number(clienteId);
+      getTransaction('clientes', 'readwrite').objectStore('clientes').put(cliente).onsuccess = () => {
+        alert('Cliente atualizado com sucesso!');
+        formCadastro.reset();
+        document.getElementById('cliente-id').value = '';
+        loadClientesOptions();
+        loadClientesList();
+        loadPromo();
       };
-      nomeTd.appendChild(linkNome);
-      tr.appendChild(nomeTd);
-
-      const whatsappTd = document.createElement('td');
-      whatsappTd.textContent = c.whatsapp;
-      tr.appendChild(whatsappTd);
-
-      const sexoTd = document.createElement('td');
-      sexoTd.textContent = c.sexo;
-      tr.appendChild(sexoTd);
-
-      const nascTd = document.createElement('td');
-      nascTd.textContent = c.nascimento;
-      tr.appendChild(nascTd);
-
-      const consultasTd = document.createElement('td');
-      consultasTd.textContent = c.consultas ?? 0;
-      tr.appendChild(consultasTd);
-
-      const acoesTd = document.createElement('td');
-
-      // Botão editar
-      const btnEdit = document.createElement('button');
-      btnEdit.textContent = 'Editar';
-      btnEdit.classList.add('btn-small');
-      btnEdit.onclick = () => openEditClienteModal(c);
-      acoesTd.appendChild(btnEdit);
-
-      // Botão excluir
-      const btnDelete = document.createElement('button');
-      btnDelete.textContent = 'Excluir';
-      btnDelete.classList.add('btn-small', 'btn-danger');
-      btnDelete.onclick = () => {
-        if (confirm(`Deseja realmente excluir o cliente "${c.nome}"? Isso apagará todos os agendamentos e cupons relacionados.`)) {
-          excluirCliente(c.id);
-        }
+    } else {
+      const store = getTransaction('clientes', 'readwrite').objectStore('clientes');
+      const requestAdd = store.add(cliente);
+      requestAdd.onsuccess = () => {
+        alert('Cliente cadastrado com sucesso!');
+        formCadastro.reset();
+        loadClientesOptions();
+        loadClientesList();
       };
-      acoesTd.appendChild(btnDelete);
-
-      tr.appendChild(acoesTd);
-
-      clientesListaTbody.appendChild(tr);
+      requestAdd.onerror = () => alert('Erro ao cadastrar cliente!');
     }
   }
 
-  // Renderiza options clientes para select na agenda
-  function renderClientesOptions() {
-    clienteAgendaSelect.innerHTML = '<option value="">Selecione um cliente...</option>';
-    for (const c of clientes) {
-      const opt = document.createElement('option');
-      opt.value = c.id;
-      opt.textContent = c.nome;
-      clienteAgendaSelect.appendChild(opt);
-    }
+  // Transação helper
+  function getTransaction(storeName, mode = 'readonly') {
+    return db.transaction(storeName, mode);
   }
 
-  // Renderiza lista agendamentos
-  function renderAgendamentos(filter = '') {
-    let f = filter.toLowerCase();
-    agendamentosListaTbody.innerHTML = '';
-    const filtered = agendamentos.filter(a => {
-      const cliente = clientes.find(c => c.id === a.clienteId);
-      if (!cliente) return false;
-      return cliente.nome.toLowerCase().includes(f);
-    });
-    if (filtered.length === 0) {
-      agendamentosListaTbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:#999;">Nenhum agendamento encontrado.</td></tr>`;
-      return;
-    }
-    filtered.sort((a,b) => new Date(a.dataHora) - new Date(b.dataHora));
-    for (const a of filtered) {
-      const tr = document.createElement('tr');
-      const cliente = clientes.find(c => c.id === a.clienteId);
-      tr.innerHTML = `
-        <td>${cliente ? cliente.nome : 'Cliente excluído'}</td>
-        <td>${a.dataHora.split('T')[0]}</td>
-        <td>${a.dataHora.split('T')[1].slice(0,5)}</td>
-      `;
-      const tdAcoes = document.createElement('td');
+  // Carregar clientes no select agenda
+  function loadClientesOptions() {
+    const select = document.getElementById('agenda-cliente');
+    select.innerHTML = '<option value="" disabled selected>Selecione um cliente</option>';
 
-      // Botão editar (abre modal agendamento)
-      const btnEdit = document.createElement('button');
-      btnEdit.textContent = 'Editar';
-      btnEdit.classList.add('btn-small');
-      btnEdit.onclick = () => openEditAgendamentoModal(a);
-      tdAcoes.appendChild(btnEdit);
-
-      // Botão excluir
-      const btnDelete = document.createElement('button');
-      btnDelete.textContent = 'Excluir';
-      btnDelete.classList.add('btn-small', 'btn-danger');
-      btnDelete.onclick = async () => {
-        if (confirm(`Excluir agendamento de ${cliente ? cliente.nome : ''} em ${a.dataHora.replace('T',' ')}?`)) {
-          await deleteItem('agendamentos', a.id);
-          agendamentos = agendamentos.filter(ag => ag.id !== a.id);
-          renderAgendamentos(searchAgendamentosInput.value);
-          renderCalendario();
-        }
-      };
-      tdAcoes.appendChild(btnDelete);
-
-      tr.appendChild(tdAcoes);
-
-      agendamentosListaTbody.appendChild(tr);
-    }
-  }
-
-  // Renderiza calendário agrupando agendamentos por data
-  function renderCalendario() {
-    calendarioContainer.innerHTML = '';
-    // Agrupa por data
-    const grupoPorData = {};
-    for (const a of agendamentos) {
-      const data = a.dataHora.split('T')[0];
-      if (!grupoPorData[data]) grupoPorData[data] = [];
-      grupoPorData[data].push(a);
-    }
-
-    const datasOrdenadas = Object.keys(grupoPorData).sort();
-
-    if (datasOrdenadas.length === 0) {
-      calendarioContainer.innerHTML = `<p style="color:#666; text-align:center; font-style:italic;">Nenhum agendamento realizado.</p>`;
-      return;
-    }
-
-    for (const data of datasOrdenadas) {
-      const divData = document.createElement('div');
-      divData.style.marginBottom = '1.5rem';
-
-      const dataTitle = document.createElement('h3');
-      dataTitle.textContent = new Date(data).toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'2-digit', year:'numeric'});
-      dataTitle.style.textTransform = 'capitalize';
-      divData.appendChild(dataTitle);
-
-      const ul = document.createElement('ul');
-      ul.style.listStyle = 'none';
-      ul.style.paddingLeft = '0';
-
-      for (const a of grupoPorData[data]) {
-        const li = document.createElement('li');
-        li.style.marginBottom = '0.4rem';
-        li.style.display = 'flex';
-        li.style.justifyContent = 'space-between';
-        li.style.alignItems = 'center';
-        li.style.background = '#f5faff';
-        li.style.padding = '0.4rem 0.7rem';
-        li.style.borderRadius = '6px';
-
-        const cliente = clientes.find(c => c.id === a.clienteId);
-
-        // Nome clicável abre ficha anamnese
-        const nomeLink = document.createElement('a');
-        nomeLink.textContent = cliente ? cliente.nome : 'Cliente excluído';
-        nomeLink.href = '#';
-        nomeLink.classList.add('link-button');
-        nomeLink.onclick = e => {
-          e.preventDefault();
-          if(cliente) showAnamneseModal(cliente);
-        };
-
-        const horarioSpan = document.createElement('span');
-        horarioSpan.textContent = a.dataHora.split('T')[1].slice(0,5);
-        horarioSpan.style.fontWeight = '600';
-
-        // Botão concluir consulta
-        const btnConcluir = document.createElement('button');
-        btnConcluir.textContent = 'Concluir Consulta';
-        btnConcluir.classList.add('btn-small');
-        btnConcluir.style.backgroundColor = '#2a7a2a';
-        btnConcluir.style.color = 'white';
-        btnConcluir.onclick = async () => {
-          if (!cliente) {
-            alert('Cliente excluído.');
-            return;
-          }
-          // Incrementa consultas do cliente
-          cliente.consultas = (cliente.consultas ?? 0) + 1;
-          await put('clientes', cliente);
-          // Remove agendamento
-          await deleteItem('agendamentos', a.id);
-          agendamentos = agendamentos.filter(ag => ag.id !== a.id);
-          await loadAllData();
-          alert(`Consulta concluída para ${cliente.nome}. Total de consultas: ${cliente.consultas}`);
-        };
-
-        const leftDiv = document.createElement('div');
-        leftDiv.style.flex = '1';
-        leftDiv.appendChild(nomeLink);
-
-        const midDiv = document.createElement('div');
-        midDiv.style.width = '70px';
-        midDiv.style.textAlign = 'center';
-        midDiv.appendChild(horarioSpan);
-
-        li.appendChild(leftDiv);
-        li.appendChild(midDiv);
-        li.appendChild(btnConcluir);
-
-        ul.appendChild(li);
-      }
-      divData.appendChild(ul);
-      calendarioContainer.appendChild(divData);
-    }
-  }
-
-  // Renderiza aba Promoção
-  function renderPromocao() {
-    promocaoList.innerHTML = '';
-    const promocionais = clientes.filter(c => (c.consultas ?? 0) >= 10);
-    if (promocionais.length === 0) {
-      promocaoList.innerHTML = `<p style="color:#666; font-style: italic;">Nenhum cliente com 10 consultas ainda.</p>`;
-      return;
-    }
-
-    for (const c of promocionais) {
-      const a = document.createElement('a');
-      a.href = '#';
-      a.textContent = c.nome;
-      a.onclick = e => {
-        e.preventDefault();
-        gerarCupom(c);
-      };
-      promocaoList.appendChild(a);
-    }
-  }
-
-  // Gera cupom para o cliente
-  async function gerarCupom(cliente) {
-    // Gerar código único BEAUTYXXX
-    let codigo;
-    do {
-      codigo = 'BEAUTY' + Math.floor(Math.random() * 900 + 100); // 100-999
-      if (cupons.find(c => c.codigo === codigo)) codigo = null;
-    } while (!codigo);
-
-    const cupom = { codigo, clienteId: cliente.id };
-    await add('cupons', cupom);
-    cupons.push(cupom);
-
-    // Zera contador consultas do cliente
-    cliente.consultas = 0;
-    await put('clientes', cliente);
-    clientes = clientes.map(c => c.id === cliente.id ? cliente : c);
-
-    // Atualiza UI
-    renderClientes(searchClientesInput.value);
-    renderPromocao();
-
-    // Mostra cupom com botão usar
-    mostrarCupomModal(cupom, cliente);
-
-    // Envia mensagem WhatsApp
-    enviarMensagemWhatsapp(cliente.whatsapp, `Parabéns ${cliente.nome}! Você ganhou um cupom: ${codigo}`);
-  }
-
-  // Modal cupom - mostrar e gerenciar uso
-  function mostrarCupomModal(cupom, cliente) {
-    modalCupomContent.innerHTML = `
-      <p><strong>Cupom gerado:</strong> ${cupom.codigo}</p>
-      <button id="btn-usar-cupom" style="background:#e63946; margin-top:1rem;">Usar Cupom</button>
-    `;
-    modalCupomBg.classList.add('active');
-
-    const btnUsar = document.getElementById('btn-usar-cupom');
-    btnUsar.onclick = () => {
-      if (confirm(`Confirma o uso do cupom ${cupom.codigo} para o cliente ${cliente.nome}?`)) {
-        usarCupom(cupom, cliente);
-      }
+    const store = getTransaction('clientes').objectStore('clientes');
+    const request = store.getAll();
+    request.onsuccess = () => {
+      const clientes = request.result.sort((a,b) => a.nome.localeCompare(b.nome));
+      clientes.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.nome} (${c.id})`;
+        select.appendChild(opt);
+      });
     };
   }
 
-  // Usar cupom
-  async function usarCupom(cupom, cliente) {
-    await deleteItem('cupons', cupom.codigo);
-    cupons = cupons.filter(c => c.codigo !== cupom.codigo);
-
-    modalCupomBg.classList.remove('active');
-    alert(`Cupom ${cupom.codigo} usado.`);
-
-    // Envia mensagem WhatsApp
-    enviarMensagemWhatsapp(cliente.whatsapp, `Olá ${cliente.nome}, seu cupom ${cupom.codigo} foi utilizado. Obrigado!`);
-    loadAllData();
+  // Horários
+  function fillHorarioOptions() {
+    const select = document.getElementById('agenda-horario');
+    select.innerHTML = '<option value="" disabled selected>Selecione horário</option>';
+    const horarios = [
+      "08:00", "08:30", "09:00", "09:30", "10:00", "10:30",
+      "11:00", "11:30", "13:00", "13:30", "14:00", "14:30",
+      "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"
+    ];
+    horarios.forEach(h => {
+      const opt = document.createElement('option');
+      opt.value = h;
+      opt.textContent = h;
+      select.appendChild(opt);
+    });
   }
 
-  // Enviar mensagem WhatsApp via API (abre WhatsApp web)
-  function enviarMensagemWhatsapp(numero, mensagem) {
-    // Limpa caracteres não numéricos, deixa só números
-    let num = numero.replace(/\D/g, '');
-    if (num.length === 11 && num.startsWith('0')) num = num.slice(1); // remove zero inicial
-    const url = `https://api.whatsapp.com/send?phone=55${num}&text=${encodeURIComponent(mensagem)}`;
-    window.open(url, '_blank');
+  // Form Agenda
+  const formAgenda = document.getElementById('form-agenda');
+  const msgAgenda = document.getElementById('msg-agenda');
+
+  formAgenda.addEventListener('submit', e => {
+    e.preventDefault();
+    agendarConsulta();
+  });
+
+  function agendarConsulta() {
+    const clienteId = Number(document.getElementById('agenda-cliente').value);
+    const data = document.getElementById('agenda-data').value;
+    const horario = document.getElementById('agenda-horario').value;
+
+    if (!clienteId || !data || !horario) {
+      msgAgenda.style.color = 'red';
+      msgAgenda.textContent = 'Preencha todos os campos.';
+      return;
+    }
+
+    // Verifica se horário já está ocupado
+    const store = getTransaction('agendamentos').objectStore('agendamentos');
+    const request = store.getAll();
+    request.onsuccess = () => {
+      const agendamentos = request.result;
+      const conflito = agendamentos.find(a => a.data === data && a.horario === horario);
+      if (conflito) {
+        msgAgenda.style.color = 'red';
+        msgAgenda.textContent = 'Horário já ocupado.';
+        return;
+      }
+
+      // Adiciona agendamento
+      const tx = getTransaction('agendamentos', 'readwrite');
+      tx.objectStore('agendamentos').add({ clienteId, data, horario, concluido: false }).onsuccess = () => {
+        msgAgenda.style.color = 'green';
+        msgAgenda.textContent = 'Agendamento realizado com sucesso!';
+        loadAgendamentos();
+        loadCalendario();
+        formAgenda.reset();
+        setMinDates();
+      };
+    };
   }
 
-  // Modal anamnese mostra dados do cliente
-  function showAnamneseModal(cliente) {
-    modalAnamneseContent.innerHTML = `
+  // Carrega agendamentos na aba Agenda
+  function loadAgendamentos() {
+    const tbody = document.getElementById('lista-agenda');
+    tbody.innerHTML = '';
+    const store = getTransaction('agendamentos').objectStore('agendamentos');
+    store.getAll().onsuccess = e => {
+      const agendamentos = e.target.result;
+      if (!agendamentos.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum agendamento.</td></tr>';
+        return;
+      }
+
+      const storeClientes = getTransaction('clientes').objectStore('clientes');
+      agendamentos.forEach(a => {
+        storeClientes.get(a.clienteId).onsuccess = e2 => {
+          const cliente = e2.target.result;
+          const tr = document.createElement('tr');
+
+          tr.innerHTML = `
+            <td><button class="btn-link" onclick="mostrarAnamneseModalById(${a.clienteId})">${cliente ? cliente.nome : 'Cliente excluído'}</button></td>
+            <td>${a.data}</td>
+            <td>${a.horario}</td>
+            <td>
+              <button class="btn-edit" onclick="editarAgendamento(${a.id})">Editar</button>
+              <button class="btn-delete" onclick="excluirAgendamento(${a.id})">Excluir</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        };
+      });
+    };
+  }
+
+  // Funções para editar e excluir agendamento (simplificadas)
+  function editarAgendamento(id) {
+    alert('Função editar agendamento ainda não implementada.');
+  }
+  function excluirAgendamento(id) {
+    if (!confirm('Confirma exclusão do agendamento?')) return;
+    const tx = getTransaction('agendamentos', 'readwrite');
+    tx.objectStore('agendamentos').delete(id).onsuccess = () => {
+      alert('Agendamento excluído.');
+      loadAgendamentos();
+      loadCalendario();
+    };
+  }
+
+  // Calendário: exibe agendamentos e botão concluir consulta
+  function loadCalendario() {
+    const tbody = document.getElementById('lista-calendario');
+    tbody.innerHTML = '';
+    const store = getTransaction('agendamentos').objectStore('agendamentos');
+    store.getAll().onsuccess = e => {
+      const agendamentos = e.target.result.sort((a,b) => (a.data > b.data) ? 1 : -1);
+      if (!agendamentos.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum agendamento.</td></tr>';
+        return;
+      }
+
+      const storeClientes = getTransaction('clientes').objectStore('clientes');
+      agendamentos.forEach(a => {
+        storeClientes.get(a.clienteId).onsuccess = e2 => {
+          const cliente = e2.target.result;
+          const tr = document.createElement('tr');
+
+          tr.innerHTML = `
+            <td>${a.data}</td>
+            <td>${a.horario}</td>
+            <td><button class="btn-link" onclick="mostrarAnamneseModalById(${a.clienteId})">${cliente ? cliente.nome : 'Cliente excluído'}</button></td>
+            <td><button style="background:#388e3c; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer;" onclick="concluirConsulta(${a.id})" ${a.concluido ? 'disabled' : ''}>${a.concluido ? 'Concluído' : 'Concluir Consulta'}</button></td>
+          `;
+          tbody.appendChild(tr);
+        };
+      });
+    };
+  }
+
+  // Concluir consulta: incrementa contador do cliente e marca agendamento como concluído
+  function concluirConsulta(agendamentoId) {
+    const tx = getTransaction('agendamentos', 'readwrite');
+    const store = tx.objectStore('agendamentos');
+    store.get(agendamentoId).onsuccess = e => {
+      const agendamento = e.target.result;
+      if (!agendamento) return;
+      agendamento.concluido = true;
+      store.put(agendamento).onsuccess = () => {
+        incrementarConsultasCliente(agendamento.clienteId);
+        loadCalendario();
+        loadPromo();
+      };
+    };
+  }
+
+  function incrementarConsultasCliente(clienteId) {
+    const tx = getTransaction('clientes', 'readwrite');
+    const store = tx.objectStore('clientes');
+    store.get(clienteId).onsuccess = e => {
+      const cliente = e.target.result;
+      if (!cliente) return;
+      cliente.consultas = (cliente.consultas || 0) + 1;
+      store.put(cliente).onsuccess = () => {
+        loadClientesList();
+      };
+    };
+  }
+
+  // Mostrar lista de clientes na aba Clientes
+  function loadClientesList() {
+    const tbody = document.getElementById('lista-clientes');
+    tbody.innerHTML = '';
+    const store = getTransaction('clientes').objectStore('clientes');
+    store.getAll().onsuccess = e => {
+      let clientes = e.target.result;
+      if (!clientes.length) {
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum cliente cadastrado.</td></tr>';
+        return;
+      }
+      clientes = clientes.sort((a,b) => a.nome.localeCompare(b.nome));
+      clientes.forEach(c => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${c.id}</td>
+          <td><button class="btn-link" onclick="mostrarAnamneseModalById(${c.id})">${c.nome}</button></td>
+          <td>${c.whatsapp}</td>
+          <td>
+            <button class="btn-edit" onclick="editarCliente(${c.id})">Editar</button>
+            <button class="btn-delete" onclick="excluirCliente(${c.id})">Excluir</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    };
+  }
+
+  // Pesquisar cliente na aba Clientes
+  const searchClientes = document.getElementById('search-clientes');
+  searchClientes.addEventListener('input', () => {
+    const filtro = searchClientes.value.toLowerCase();
+    const tbody = document.getElementById('lista-clientes');
+    const trs = tbody.querySelectorAll('tr');
+    trs.forEach(tr => {
+      const tdId = tr.children[0].textContent.toLowerCase();
+      const tdNome = tr.children[1].textContent.toLowerCase();
+      if (tdId.includes(filtro) || tdNome.includes(filtro)) {
+        tr.style.display = '';
+      } else {
+        tr.style.display = 'none';
+      }
+    });
+  });
+
+  // Editar cliente - carrega dados no formulário de cadastro
+  function editarCliente(id) {
+    const store = getTransaction('clientes').objectStore('clientes');
+    store.get(id).onsuccess = e => {
+      const cliente = e.target.result;
+      if (!cliente) return alert('Cliente não encontrado');
+      document.getElementById('cliente-id').value = cliente.id;
+      document.getElementById('nome').value = cliente.nome;
+      document.getElementById('whatsapp').value = cliente.whatsapp;
+      document.getElementById('sexo').value = cliente.sexo;
+      document.getElementById('nascimento').value = cliente.nascimento;
+      document.getElementById('email').value = cliente.email || '';
+      document.getElementById('cep').value = cliente.cep;
+      document.getElementById('bairro').value = cliente.bairro;
+      document.getElementById('endereco').value = cliente.endereco;
+      document.getElementById('numero').value = cliente.numero;
+      document.getElementById('complemento').value = cliente.complemento || '';
+      document.getElementById('gestante').value = cliente.gestante;
+      document.getElementById('alergias').value = cliente.alergias;
+      document.getElementById('diabete').value = cliente.diabete;
+      document.getElementById('ist').value = cliente.ist;
+      document.getElementById('ist-quais').value = cliente.istQuais || '';
+      document.getElementById('atividade').value = cliente.atividade;
+      document.getElementById('medicamento').value = cliente.medicamento;
+      document.getElementById('queda-pelos').value = cliente.quedaPelos;
+      document.getElementById('observacoes').value = cliente.observacoes || '';
+      // Vai para aba Cadastro
+      navButtons.forEach(b => b.classList.remove('active'));
+      tabs.forEach(t => t.classList.remove('active'));
+      document.querySelector('nav button[data-tab="cadastro"]').classList.add('active');
+      document.getElementById('cadastro').classList.add('active');
+    };
+  }
+
+  // Excluir cliente
+  function excluirCliente(id) {
+    if (!confirm('Confirma exclusão do cliente?')) return;
+    const tx = getTransaction('clientes', 'readwrite');
+    tx.objectStore('clientes').delete(id).onsuccess = () => {
+      alert('Cliente excluído.');
+      loadClientesOptions();
+      loadClientesList();
+      loadPromo();
+    };
+  }
+
+  // Modal anamnese
+  const modal = document.getElementById('modal-anamnese');
+  const modalContentDiv = document.getElementById('modal-anamnese-details');
+  const closeModalBtn = document.getElementById('close-modal');
+
+  closeModalBtn.onclick = () => {
+    modal.style.display = 'none';
+  };
+
+  window.onclick = e => {
+    if (e.target === modal) {
+      modal.style.display = 'none';
+    }
+  };
+
+  function mostrarAnamneseModal(cliente) {
+    if (!cliente) return;
+    const html = `
       <p><strong>Nome:</strong> ${cliente.nome}</p>
       <p><strong>WhatsApp:</strong> ${cliente.whatsapp}</p>
       <p><strong>Sexo:</strong> ${cliente.sexo}</p>
-      <p><strong>Data de Nascimento:</strong> ${cliente.nascimento}</p>
-      <p><strong>Consultas realizadas:</strong> ${cliente.consultas ?? 0}</p>
-      <p><strong>Observações:</strong><br/>${cliente.observacoes ? cliente.observacoes.replace(/\n/g, '<br>') : 'Nenhuma'}</p>
+      <p><strong>Data Nascimento:</strong> ${cliente.nascimento}</p>
+      <p><strong>E-mail:</strong> ${cliente.email || '-'}</p>
+      <p><strong>CEP:</strong> ${cliente.cep}</p>
+      <p><strong>Bairro:</strong> ${cliente.bairro}</p>
+      <p><strong>Endereço:</strong> ${cliente.endereco}, Nº ${cliente.numero} ${cliente.complemento || ''}</p>
+      <p><strong>Gestante:</strong> ${cliente.gestante}</p>
+      <p><strong>Alergias:</strong> ${cliente.alergias}</p>
+      <p><strong>Diabete:</strong> ${cliente.diabete}</p>
+      <p><strong>IST:</strong> ${cliente.ist}${cliente.ist === 'Sim' ? ' (' + cliente.istQuais + ')' : ''}</p>
+      <p><strong>Atividade física:</strong> ${cliente.atividade}</p>
+      <p><strong>Uso de medicamento:</strong> ${cliente.medicamento}</p>
+      <p><strong>Queda de pelos:</strong> ${cliente.quedaPelos}</p>
+      <p><strong>Observações:</strong> ${cliente.observacoes || '-'}</p>
+      <p><strong>Consultas concluídas:</strong> ${cliente.consultas || 0}</p>
     `;
-    modalAnamneseBg.classList.add('active');
+    modalContentDiv.innerHTML = html;
+    modal.style.display = 'block';
   }
 
-  // Modal editar cliente
-  function openEditClienteModal(cliente) {
-    // Preenche o formulário com os dados do cliente e muda botão para "Salvar"
-    formCadastro.nome.value = cliente.nome;
-    formCadastro.whatsapp.value = cliente.whatsapp;
-    formCadastro.sexo.value = cliente.sexo;
-    formCadastro.nascimento.value = cliente.nascimento;
-    formCadastro.observacoes.value = cliente.observacoes || '';
-    formCadastro.querySelector('button').textContent = 'Salvar Alterações';
-
-    // Marca o formulário com id do cliente editado
-    formCadastro.dataset.editId = cliente.id;
-
-    // Muda aba para cadastro
-    tabButtons.forEach(b => b.classList.remove('active'));
-    tabContents.forEach(tc => tc.classList.remove('active'));
-    document.getElementById('tab-cadastro').classList.add('active');
-    document.querySelector('button[data-tab="cadastro"]').classList.add('active');
+  function mostrarAnamneseModalById(id) {
+    const store = getTransaction('clientes').objectStore('clientes');
+    store.get(id).onsuccess = e => {
+      const cliente = e.target.result;
+      mostrarAnamneseModal(cliente);
+    };
   }
 
-  // Modal editar agendamento
-  function openEditAgendamentoModal(agendamento) {
-    formAgenda['cliente-agenda'].value = agendamento.clienteId;
-    const dt = agendamento.dataHora.split('T')[0];
-    const hr = agendamento.dataHora.split('T')[1].slice(0,5);
-    formAgenda['data-agenda'].value = dt;
-    formAgenda['hora-agenda'].value = hr;
-    formAgenda.querySelector('button').textContent = 'Salvar Alterações';
-    formAgenda.dataset.editId = agendamento.id;
+  // Promoção
+  const promoList = document.getElementById('promo-list');
 
-    // Muda aba para agenda
-    tabButtons.forEach(b => b.classList.remove('active'));
-    tabContents.forEach(tc => tc.classList.remove('active'));
-    document.getElementById('tab-agenda').classList.add('active');
-    document.querySelector('button[data-tab="agenda"]').classList.add('active');
-  }
-
-  // Excluir cliente (inclui apagar agendamentos e cupons)
-  async function excluirCliente(clienteId) {
-    // Apaga cliente
-    await deleteItem('clientes', clienteId);
-    clientes = clientes.filter(c => c.id !== clienteId);
-
-    // Apaga agendamentos do cliente
-    const agendsDel = agendamentos.filter(a => a.clienteId === clienteId);
-    for (const a of agendsDel) {
-      await deleteItem('agendamentos', a.id);
-    }
-    agendamentos = agendamentos.filter(a => a.clienteId !== clienteId);
-
-    // Apaga cupons do cliente
-    const cupDel = cupons.filter(c => c.clienteId === clienteId);
-    for (const c of cupDel) {
-      await deleteItem('cupons', c.codigo);
-    }
-    cupons = cupons.filter(c => c.clienteId !== clienteId);
-
-    await loadAllData();
-  }
-
-  // Valida e salva cadastro cliente
-  formCadastro.addEventListener('submit', async e => {
-    e.preventDefault();
-    const nome = formCadastro.nome.value.trim();
-    const whatsapp = formCadastro.whatsapp.value.trim();
-    const sexo = formCadastro.sexo.value;
-    const nascimento = formCadastro.nascimento.value;
-    const observacoes = formCadastro.observacoes.value.trim();
-
-    if (!nome || !whatsapp || !sexo || !nascimento) {
-      alert('Preencha todos os campos obrigatórios.');
-      return;
-    }
-    // Validação regex whatsapp
-    const regexWpp = /^\(\d{2}\)9?\d{4}-?\d{4}$/;
-    if (!regexWpp.test(whatsapp)) {
-      alert('WhatsApp inválido. Use formato (xx)9xxxx-xxxx');
-      return;
-    }
-
-    // Verifica se está editando
-    if (formCadastro.dataset.editId) {
-      const id = Number(formCadastro.dataset.editId);
-      const cliente = clientes.find(c => c.id === id);
-      if (!cliente) {
-        alert('Cliente não encontrado para edição.');
+  function loadPromo() {
+    promoList.innerHTML = '';
+    const store = getTransaction('clientes').objectStore('clientes');
+    store.getAll().onsuccess = e => {
+      const clientes = e.target.result.filter(c => (c.consultas || 0) >= 10);
+      if (clientes.length === 0) {
+        promoList.innerHTML = '<p>Nenhum cliente com 10 consultas concluídas no momento.</p>';
         return;
       }
-      cliente.nome = nome;
-      cliente.whatsapp = whatsapp;
-      cliente.sexo = sexo;
-      cliente.nascimento = nascimento;
-      cliente.observacoes = observacoes;
-      await put('clientes', cliente);
-      formCadastro.dataset.editId = '';
-      formCadastro.querySelector('button').textContent = 'Cadastrar Cliente';
-      alert('Cliente atualizado com sucesso.');
-    } else {
-      // Novo cliente
-      const novoCliente = {
-        nome, whatsapp, sexo, nascimento, observacoes,
-        consultas: 0,
+      clientes.forEach(cliente => {
+        const div = document.createElement('div');
+        div.style.marginBottom = '10px';
+        const link = document.createElement('button');
+        link.className = 'btn-link';
+        link.textContent = cliente.nome;
+        link.onclick = () => gerarCupom(cliente);
+        div.appendChild(link);
+
+        promoList.appendChild(div);
+      });
+    };
+  }
+
+  // Gerar cupom
+  function gerarCupom(cliente) {
+    const codigo = gerarCodigoCupom();
+    const cupom = {
+      codigo,
+      clienteId: cliente.id,
+      usado: false
+    };
+
+    const store = getTransaction('cupons', 'readwrite').objectStore('cupons');
+    store.add(cupom).onsuccess = () => {
+      alert(`Cupom gerado: ${codigo}\nEnviando WhatsApp para ${cliente.whatsapp}...`);
+      enviarMensagemWhatsApp(cliente.whatsapp, `Parabéns ${cliente.nome}! Você ganhou um cupom de desconto: ${codigo}`);
+      zerarConsultas(cliente.id);
+      mostrarCupomUsar(cupom, cliente);
+      loadPromo();
+    };
+  }
+
+  function gerarCodigoCupom() {
+    const num = Math.floor(100 + Math.random() * 900);
+    return `BEAUTY${num}`;
+  }
+
+  function zerarConsultas(clienteId) {
+    const tx = getTransaction('clientes', 'readwrite');
+    const store = tx.objectStore('clientes');
+    store.get(clienteId).onsuccess = e => {
+      const cliente = e.target.result;
+      if (!cliente) return;
+      cliente.consultas = 0;
+      store.put(cliente).onsuccess = () => {
+        loadClientesList();
       };
-      await add('clientes', novoCliente);
-      alert('Cliente cadastrado com sucesso.');
-    }
-    formCadastro.reset();
-    await loadAllData();
-  });
+    };
+  }
 
-  // Valida e salva agendamento
-  formAgenda.addEventListener('submit', async e => {
-    e.preventDefault();
-    const clienteId = Number(formAgenda['cliente-agenda'].value);
-    const data = formAgenda['data-agenda'].value;
-    const hora = formAgenda['hora-agenda'].value;
-
-    if (!clienteId || !data || !hora) {
-      alert('Preencha todos os campos obrigatórios.');
-      return;
-    }
-    const dataHora = data + 'T' + hora + ':00';
-
-    // Verifica se já existe agendamento no mesmo horário
-    const existente = agendamentos.find(a => a.dataHora === dataHora && a.id !== Number(formAgenda.dataset.editId || -1));
-    if (existente) {
-      alert('Já existe um agendamento neste horário.');
-      return;
-    }
-
-    // Está editando?
-    if (formAgenda.dataset.editId) {
-      const id = Number(formAgenda.dataset.editId);
-      const agendamento = agendamentos.find(a => a.id === id);
-      if (!agendamento) {
-        alert('Agendamento não encontrado para edição.');
-        return;
+  function mostrarCupomUsar(cupom, cliente) {
+    const div = document.createElement('div');
+    div.style.margin = '15px 0';
+    div.innerHTML = `
+      <p><strong>Cupom:</strong> ${cupom.codigo} para cliente ${cliente.nome}</p>
+    `;
+    const btnUsar = document.createElement('button');
+    btnUsar.textContent = 'Usar cupom';
+    btnUsar.style.backgroundColor = '#0a679d';
+    btnUsar.style.color = 'white';
+    btnUsar.style.border = 'none';
+    btnUsar.style.padding = '8px 16px';
+    btnUsar.style.borderRadius = '6px';
+    btnUsar.style.cursor = 'pointer';
+    btnUsar.onclick = () => {
+      if (confirm(`Confirmar uso do cupom ${cupom.codigo} para ${cliente.nome}?`)) {
+        usarCupom(cupom);
+        div.remove();
+        loadPromo();
       }
-      agendamento.clienteId = clienteId;
-      agendamento.dataHora = dataHora;
-      await put('agendamentos', agendamento);
-      formAgenda.dataset.editId = '';
-      formAgenda.querySelector('button').textContent = 'Agendar';
-      alert('Agendamento atualizado com sucesso.');
-    } else {
-      // Novo agendamento
-      const novoAgendamento = {
-        clienteId,
-        dataHora,
-      };
-      await add('agendamentos', novoAgendamento);
-      alert('Agendamento realizado com sucesso.');
+    };
+    promoList.appendChild(div);
+  }
+
+  function usarCupom(cupom) {
+    const tx = getTransaction('cupons', 'readwrite');
+    const store = tx.objectStore('cupons');
+    store.delete(cupom.codigo).onsuccess = () => {
+      alert(`Cupom ${cupom.codigo} removido.`);
+      getClienteById(cupom.clienteId).then(cliente => {
+        if (!cliente) return;
+        enviarMensagemWhatsApp(cliente.whatsapp, `O cupom ${cupom.codigo} foi usado. Obrigado por usar nossos serviços!`);
+      });
+    };
+  }
+
+  function getClienteById(id) {
+    return new Promise((resolve) => {
+      const store = getTransaction('clientes').objectStore('clientes');
+      const req = store.get(id);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => resolve(null);
+    });
+  }
+
+  function enviarMensagemWhatsApp(numero, mensagem) {
+    let numFormatado = numero.replace(/[^\d]/g, '');
+    const url = `https://api.whatsapp.com/send?phone=${numFormatado}&text=${encodeURIComponent(mensagem)}`;
+    window.open(url, '_blank');
+  }
+
+  // Busca endereço e bairro pelo CEP usando ViaCEP
+  document.getElementById('cep').addEventListener('blur', function() {
+    const cep = this.value.replace(/\D/g, '');
+    if (cep.length !== 8) {
+      alert('CEP inválido! Deve conter 8 números.');
+      return;
     }
-    formAgenda.reset();
-    await loadAllData();
+    fetch(`https://viacep.com.br/ws/${cep}/json/`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.erro) {
+          alert('CEP não encontrado.');
+          return;
+        }
+        // Preenche os campos automaticamente
+        document.getElementById('bairro').value = data.bairro || '';
+        document.getElementById('endereco').value = data.logradouro || '';
+      })
+      .catch(() => alert('Erro ao buscar o CEP.'));
   });
 
-  // Buscas e filtros
-  searchClientesInput.addEventListener('input', e => renderClientes(e.target.value));
-  searchAgendamentosInput.addEventListener('input', e => renderAgendamentos(e.target.value));
-
-  // Inicialização
-  (async () => {
-    try {
-      await openDB();
-    } catch(err) {
-      alert('Erro ao abrir banco de dados: ' + err);
-    }
-  })();
-
-})();
 </script>
 
 </body>
